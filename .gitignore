@@ -1,0 +1,11 @@
+node_modules/
+out/
+dist/
+build/
+native/target/
+resources/bin/*
+!resources/bin/.gitkeep
+resources/plugins/
+resources/licenses/*
+!resources/licenses/.gitkeep
+*.tsbuildinfo

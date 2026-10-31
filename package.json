@@ -1,0 +1,39 @@
+{
+  "name": "video-downloader",
+  "productName": "Video Downloader",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Video downloader",
+  "main": "./out/main/index.js",
+  "scripts": {
+    "build:native": "napi build --manifest-path native/node/Cargo.toml --release --output-dir build/native --no-js --dts index.d.ts",
+    "build:native:debug": "napi build --manifest-path native/node/Cargo.toml --output-dir build/native --no-js --dts index.d.ts",
+    "fetch:bin": "node scripts/fetch-binaries.mjs",
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
+    "dist": "npm run build:native && npm run build && electron-builder --win"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^3.10.9",
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "electron": "^45.2.0",
+    "electron-builder": "^26.18.0",
+    "electron-vite": "^6.0.0",
+    "typescript": "^5.9.3",
+    "vite": "^8.3.5",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "lucide-react": "^1.65.0"
+  },
+  "napi": {
+    "binaryName": "vdl"
+  },
+  "allowScripts": {
+    "electron": true,
+    "electron-winstaller": true
+  }
+}

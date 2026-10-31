@@ -1,0 +1,31 @@
+appId: com.videodownloader.app
+productName: Video Downloader
+directories:
+  output: dist
+files:
+  - out/**
+  - package.json
+asar: true
+extraResources:
+  - from: build/native/vdl.node
+    to: native/vdl.node
+  - from: resources/bin
+    to: bin
+    filter:
+      - "*.exe"
+      - "yt-dlp/**"
+  - from: resources/plugins
+    to: plugins
+  - from: resources/licenses
+    to: licenses
+win:
+  target: nsis
+  executableName: VideoDownloader
+  icon: resources/icon.ico
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  installerIcon: resources/icon.ico
+  uninstallerIcon: resources/icon.ico
