@@ -3,6 +3,7 @@ import { join } from 'node:path'
 import type { DownloadRequest, Lang, RemoveChoice, Settings } from '../shared/types'
 import { loadNative, resourcesDir, wrap } from './native'
 import { cookiesPath, hasCookies, logout, openLogin } from './login'
+import { initUpdater } from './updater'
 
 if (!app.requestSingleInstanceLock()) app.quit()
 
@@ -99,6 +100,9 @@ function registerIpc(): void {
   })
   ipcMain.handle('isLoggedIn', () => hasCookies())
   ipcMain.handle('readClipboard', () => clipboard.readText())
+  ipcMain.handle('setThemeSource', (_e, mode: 'system' | 'light' | 'dark') => {
+    if (['system', 'light', 'dark'].includes(mode)) nativeTheme.themeSource = mode
+  })
 }
 
 app.whenReady().then(() => {
@@ -110,6 +114,7 @@ app.whenReady().then(() => {
   if (hasCookies()) native.setCookiesFile(cookiesPath())
 
   registerIpc()
+  initUpdater(() => mainWindow)
   createWindow()
 })
 

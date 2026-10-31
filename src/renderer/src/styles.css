@@ -639,8 +639,7 @@ button:disabled {
   flex: 1;
   min-width: 0;
   height: 30px;
-  display: flex;
-  align-items: center;
+  line-height: 28px;
   padding: 0 10px;
   background: var(--surface);
   border: 1px solid var(--border);

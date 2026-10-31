@@ -35,6 +35,7 @@ function apply({ mode, accent }: Theme): void {
   const root = document.documentElement
   root.dataset.theme = dark ? 'dark' : 'light'
   root.dataset.accent = accent
+  void window.api.setThemeSource(mode)
 }
 
 export function initTheme(): void {

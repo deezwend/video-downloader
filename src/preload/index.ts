@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron'
-import type { Api, CoreEvent } from '../shared/types'
+import type { Api, CoreEvent, UpdateState } from '../shared/types'
 
 const invoke = (channel: string) => (...args: unknown[]) => ipcRenderer.invoke(channel, ...args)
 
@@ -26,10 +26,20 @@ const api: Api = {
   logout: invoke('logout'),
   isLoggedIn: invoke('isLoggedIn'),
   readClipboard: invoke('readClipboard'),
+  appVersion: invoke('appVersion'),
+  updateState: invoke('updateState'),
+  checkForUpdates: invoke('checkForUpdates'),
+  installUpdate: invoke('installUpdate'),
+  setThemeSource: invoke('setThemeSource'),
   onEvent(cb) {
     const listener = (_e: Electron.IpcRendererEvent, event: CoreEvent) => cb(event)
     ipcRenderer.on('event', listener)
     return () => ipcRenderer.removeListener('event', listener)
+  },
+  onUpdate(cb) {
+    const listener = (_e: Electron.IpcRendererEvent, state: UpdateState) => cb(state)
+    ipcRenderer.on('update', listener)
+    return () => ipcRenderer.removeListener('update', listener)
   }
 } as Api
 

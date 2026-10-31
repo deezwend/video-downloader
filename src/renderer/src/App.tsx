@@ -6,7 +6,8 @@ import type {
   DownloadRequest,
   ItemError,
   MediaInfo,
-  Settings
+  Settings,
+  UpdateState
 } from '../../shared/types'
 import { extractUrls } from './format'
 import { currentLang, useT } from './i18n'
@@ -44,6 +45,7 @@ export default function App() {
   const [toast, setToast] = useState<string | null>(null)
   const [dragging, setDragging] = useState(false)
   const [updating, setUpdating] = useState(false)
+  const [appUpdate, setAppUpdate] = useState<UpdateState>({ status: 'idle' })
   const probeToken = useRef(0)
   const lastClip = useRef('')
   const t = useT()
@@ -53,7 +55,9 @@ export default function App() {
     void api.getSettings().then(setSettings)
     void api.binaryStatus().then(setBins)
     void api.isLoggedIn().then(setLoggedIn)
-    return api.onEvent((e) => {
+    void api.updateState().then(setAppUpdate)
+    const offUpdate = api.onUpdate(setAppUpdate)
+    const offEvent = api.onEvent((e) => {
       switch (e.type) {
         case 'item':
           setItems((prev) => ({ ...prev, [e.item.id]: e.item }))
@@ -74,6 +78,10 @@ export default function App() {
           break
       }
     })
+    return () => {
+      offUpdate()
+      offEvent()
+    }
   }, [])
 
   useEffect(() => {
@@ -324,6 +332,15 @@ export default function App() {
               {t.downloadYtdlp}
             </button>
           )}
+        </div>
+      )}
+
+      {appUpdate.status === 'downloaded' && (
+        <div className="banner">
+          <span className="grow">{t.updateReady(appUpdate.version)}</span>
+          <button className="btn small" onClick={() => void api.installUpdate()}>
+            {t.restartToUpdate}
+          </button>
         </div>
       )}
 

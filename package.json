@@ -12,7 +12,8 @@
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
-    "dist": "npm run build:native && npm run build && electron-builder --win"
+    "dist": "npm run build:native && npm run build && electron-builder --win --publish never",
+    "release": "npm run build:native && npm run build && electron-builder --win --publish always"
   },
   "devDependencies": {
     "@napi-rs/cli": "^3.10.9",
@@ -23,11 +24,11 @@
     "electron": "^45.2.0",
     "electron-builder": "^26.18.0",
     "electron-vite": "^6.0.0",
-    "typescript": "^5.9.3",
-    "vite": "^8.3.5",
+    "lucide-react": "^1.65.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "lucide-react": "^1.65.0"
+    "typescript": "^5.9.3",
+    "vite": "^8.3.5"
   },
   "napi": {
     "binaryName": "vdl"
@@ -35,5 +36,8 @@
   "allowScripts": {
     "electron": true,
     "electron-winstaller": true
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.11"
   }
 }

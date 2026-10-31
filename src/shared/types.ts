@@ -131,6 +131,15 @@ export type Result<T> = { ok: true; value: T } | { ok: false; error: ItemError }
 
 export type RemoveChoice = 'cancel' | 'list' | 'file'
 
+export type UpdateState =
+  | { status: 'idle' }
+  | { status: 'unsupported' }
+  | { status: 'checking' }
+  | { status: 'latest' }
+  | { status: 'downloading'; version: string; percent: number }
+  | { status: 'downloaded'; version: string }
+  | { status: 'error'; message: string }
+
 export interface Api {
   probe(url: string): Promise<Result<MediaInfo>>
   /** Title/thumbnail only (no qualities), fast; null when the site is not supported. */
@@ -155,5 +164,11 @@ export interface Api {
   logout(): Promise<void>
   isLoggedIn(): Promise<boolean>
   readClipboard(): Promise<string>
+  setThemeSource(mode: 'system' | 'light' | 'dark'): Promise<void>
+  appVersion(): Promise<string>
+  updateState(): Promise<UpdateState>
+  checkForUpdates(): Promise<void>
+  installUpdate(): Promise<void>
   onEvent(cb: (event: CoreEvent) => void): () => void
+  onUpdate(cb: (state: UpdateState) => void): () => void
 }

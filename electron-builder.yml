@@ -29,3 +29,7 @@ nsis:
   createDesktopShortcut: true
   installerIcon: resources/icon.ico
   uninstallerIcon: resources/icon.ico
+publish:
+  provider: github
+  owner: deezwend
+  repo: video-downloader

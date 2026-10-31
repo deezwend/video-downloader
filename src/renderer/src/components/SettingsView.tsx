@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { LoaderCircle } from 'lucide-react'
-import type { BinaryInfo, BinaryStatus, Settings } from '../../../shared/types'
+import type { BinaryInfo, BinaryStatus, Settings, UpdateState } from '../../../shared/types'
 import { ACCENTS, useTheme } from '../theme'
 import { setLangMode, useLangMode, useT } from '../i18n'
 
@@ -27,6 +27,58 @@ function Version({ info }: { info: BinaryInfo | undefined }) {
     <span className="version" title={info.path}>
       {info.version ?? '?'}
     </span>
+  )
+}
+
+function AppUpdate() {
+  const t = useT()
+  const [version, setVersion] = useState('')
+  const [state, setState] = useState<UpdateState>({ status: 'idle' })
+
+  useEffect(() => {
+    void window.api.appVersion().then(setVersion)
+    void window.api.updateState().then(setState)
+    return window.api.onUpdate(setState)
+  }, [])
+
+  const label = (() => {
+    switch (state.status) {
+      case 'latest':
+        return t.upToDate
+      case 'downloading':
+        return t.updateDownloading(state.version, Math.round(state.percent))
+      case 'downloaded':
+        return t.updateReady(state.version)
+      case 'error':
+        return t.updateFailed
+      case 'unsupported':
+        return t.devBuild
+      default:
+        return null
+    }
+  })()
+  const busy = state.status === 'checking' || state.status === 'downloading'
+
+  return (
+    <div className="setting">
+      <span>{t.version}</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <span className={`version${state.status === 'error' ? ' missing' : ''}`} title={state.status === 'error' ? state.message : undefined}>
+          {version}
+          {label && ` · ${label}`}
+        </span>
+        {state.status === 'downloaded' ? (
+          <button className="btn small" onClick={() => void window.api.installUpdate()}>
+            {t.restartToUpdate}
+          </button>
+        ) : (
+          <button className="btn small" disabled={busy} onClick={() => void window.api.checkForUpdates()}>
+            {busy ? <LoaderCircle size={14} className="spin" /> : null}
+            {t.checkUpdates}
+          </button>
+        )}
+      </div>
+    </div>
   )
 }
 
@@ -235,6 +287,11 @@ export default function SettingsView({ settings, bins, loggedIn, onChange, onLog
               </button>
             )}
           </div>
+        </section>
+
+        <section className="section">
+          <h3>{t.app}</h3>
+          <AppUpdate />
         </section>
 
         <section className="section">
